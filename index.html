@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ghost Browser Mobile</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #121212;
+            color: #e0e0e0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            text-align: center;
+            width: 90%;
+            max-width: 600px;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #bb86fc;
+        }
+
+        .search-box {
+            display: flex;
+            background: #1e1e1e;
+            border-radius: 25px;
+            padding: 5px 15px;
+            border: 1px solid #333;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+
+        input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: white;
+            padding: 15px 5px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        button {
+            background: #bb86fc;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            color: #121212;
+            font-weight: bold;
+            cursor: pointer;
+            margin-left: 5px;
+            margin-top: 2px;
+        }
+
+        .info {
+            margin-top: 20px;
+            font-size: 0.8rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Ghost Browser</h1>
+        <div class="search-box">
+            <input type="text" id="urlInput" placeholder="Search or type URL...">
+            <button onclick="go()">GO</button>
+        </div>
+        <div class="info">
+            Private Search via DuckDuckGo
+        </div>
+    </div>
+
+    <script>
+        function go() {
+            let query = document.getElementById("urlInput").value;
+            
+            if (!query) return;
+
+            // Check if it's a URL or a search
+            let url = "";
+            if (query.includes(".") && !query.includes(" ")) {
+                if (!query.startsWith("http")) {
+                    url = "https://" + query;
+                } else {
+                    url = query;
+                }
+            } else {
+                // If it's text, search DuckDuckGo (Private)
+                url = "https://duckduckgo.com/?q=" + encodeURIComponent(query);
+            }
+
+            // Open in new tab with "noreferrer" (Privacy feature)
+            // This prevents the new site from knowing where you came from
+            let win = window.open(url, '_blank');
+            win.focus();
+        }
+
+        // Allow pressing "Enter" key
+        document.getElementById("urlInput").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                go();
+            }
+        });
+    </script>
+
+</body>
+</html>
