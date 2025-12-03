@@ -2,117 +2,99 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ghost Browser Mobile</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>My Private Web</title>
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: #121212;
-            color: #e0e0e0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        /* Make it look like a real mobile app */
+        body { margin: 0; padding: 0; background: #000; color: #fff; font-family: sans-serif; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        
+        /* The Address Bar Area */
+        .browser-bar {
+            background: #222;
+            padding: 10px;
             display: flex;
-            flex-direction: column;
-            height: 100vh;
             align-items: center;
-            justify-content: center;
+            border-bottom: 1px solid #444;
+            flex-shrink: 0; /* Don't shrink this bar */
         }
 
-        .container {
-            text-align: center;
-            width: 90%;
-            max-width: 600px;
-        }
-
-        h1 {
-            font-size: 2rem;
-            margin-bottom: 20px;
-            color: #bb86fc;
-        }
-
-        .search-box {
-            display: flex;
-            background: #1e1e1e;
-            border-radius: 25px;
-            padding: 5px 15px;
-            border: 1px solid #333;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-        }
-
+        /* The Input Box */
         input {
-            flex: 1;
-            background: transparent;
+            width: 100%;
+            background: #333;
             border: none;
             color: white;
-            padding: 15px 5px;
+            padding: 10px;
+            border-radius: 8px;
             font-size: 16px;
             outline: none;
         }
 
+        /* The Go Button */
         button {
-            background: #bb86fc;
+            background: #007bff;
+            color: white;
             border: none;
-            border-radius: 50%;
-            width: 45px;
-            height: 45px;
-            color: #121212;
+            padding: 10px 15px;
+            margin-left: 8px;
+            border-radius: 8px;
             font-weight: bold;
-            cursor: pointer;
-            margin-left: 5px;
-            margin-top: 2px;
         }
 
-        .info {
-            margin-top: 20px;
-            font-size: 0.8rem;
-            color: #666;
+        /* The Viewport (Where sites load) */
+        iframe {
+            flex-grow: 1; /* Take up all remaining space */
+            border: none;
+            background: #fff; /* Most sites have white backgrounds */
+            width: 100%;
+        }
+        
+        .error-msg {
+            display: none;
+            color: #ff6b6b;
+            font-size: 12px;
+            padding: 5px;
+            text-align: center;
+            background: #222;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>Ghost Browser</h1>
-        <div class="search-box">
-            <input type="text" id="urlInput" placeholder="Search or type URL...">
-            <button onclick="go()">GO</button>
-        </div>
-        <div class="info">
-            Private Search via DuckDuckGo
-        </div>
+    <!-- Navigation Bar -->
+    <div class="browser-bar">
+        <input type="text" id="urlInput" placeholder="example.com">
+        <button onclick="loadSite()">GO</button>
+    </div>
+    
+    <!-- Helper message for blocked sites -->
+    <div id="errorMsg" class="error-msg">
+        Note: If the screen below stays white, that website (like Google) blocks external viewers. Try Wikipedia.org to test.
     </div>
 
+    <!-- The Window into the Web -->
+    <iframe id="browserFrame" src="about:blank"></iframe>
+
     <script>
-        function go() {
-            let query = document.getElementById("urlInput").value;
-            
-            if (!query) return;
+        function loadSite() {
+            var input = document.getElementById("urlInput").value;
+            var frame = document.getElementById("browserFrame");
+            var msg = document.getElementById("errorMsg");
 
-            // Check if it's a URL or a search
-            let url = "";
-            if (query.includes(".") && !query.includes(" ")) {
-                if (!query.startsWith("http")) {
-                    url = "https://" + query;
-                } else {
-                    url = query;
-                }
-            } else {
-                // If it's text, search DuckDuckGo (Private)
-                url = "https://duckduckgo.com/?q=" + encodeURIComponent(query);
+            // If empty, do nothing
+            if (!input) return;
+
+            // Automatically add https:// if missing
+            if (!input.startsWith("http://") && !input.startsWith("https://")) {
+                input = "https://" + input;
             }
 
-            // Open in new tab with "noreferrer" (Privacy feature)
-            // This prevents the new site from knowing where you came from
-            let win = window.open(url, '_blank');
-            win.focus();
+            // Show the helper message
+            msg.style.display = "block";
+
+            // Load the site into the iframe
+            frame.src = input;
         }
-
-        // Allow pressing "Enter" key
-        document.getElementById("urlInput").addEventListener("keypress", function(event) {
-            if (event.key === "Enter") {
-                go();
-            }
-        });
     </script>
 
 </body>
